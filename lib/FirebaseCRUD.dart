@@ -27,6 +27,7 @@ class _HomePageState extends State<HomePage> {
     }
 
     await showModalBottomSheet(
+      backgroundColor: Colors.purple,
         isScrollControlled: true,
         context: context,
         builder: (BuildContext ctx) {
@@ -68,13 +69,12 @@ class _HomePageState extends State<HomePage> {
                   child: Text(action == 'create' ? 'Create' : 'Update'),
                   onPressed: () async {
                     final String? name = _nameController.text;
-                    final double? price =
-                    double.tryParse(_priceController.text);
-                    final int? quantity = int.tryParse(_quantityController.text);
-                    if (name != null && price != null && quantity != null) {
+                    final double? price = double.tryParse(_priceController.text);
+                    final double? quantity = double.tryParse(_quantityController.text);
+                    if (name != null && price != null ) {
                       if (action == 'create') {
                         // Persist a new product to Firestore
-                        await _productss.add({"name": name, "price": price});
+                        await _productss.add({"name": name, "price": price, 'quantity':quantity});
                       }
 
                       if (action == 'update') {
@@ -113,7 +113,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Kindacode.com'),
+        title: const Text('Keep Groceries'),
       ),
       // Using StreamBuilder to display all products from Firestore in real-time
       body: StreamBuilder(
@@ -126,28 +126,38 @@ class _HomePageState extends State<HomePage> {
                 final DocumentSnapshot documentSnapshot =
                 streamSnapshot.data!.docs[index];
                 return Card(
-                  margin: const EdgeInsets.all(10),
-                  child: Column(
-                    children: [
-                      Text(documentSnapshot['name']),
-                      Text(documentSnapshot['price'].toString()),
-                      Text(documentSnapshot['quantity'].toString()),
-                      Row(
-                        children: [
-                          // Press this button to edit a single product
-                          IconButton(
-                              icon: const Icon(Icons.edit),
-                              onPressed: () =>
-                                  _createOrUpdate(documentSnapshot)),
-                          // This icon button is used to delete a single product
-                          IconButton(
-                              icon: const Icon(Icons.delete),
-                              onPressed: () =>
-                                  _deleteProduct(documentSnapshot.id)),
-                        ],
+                  color: Colors.purple,
+                  margin: const EdgeInsets.all(16),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(documentSnapshot['name']),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(documentSnapshot['price'].toString()),
+                        ),
+                        Text(documentSnapshot['quantity'].toString()),
+                        Row(
+                          children: [
+                            // Press this button to edit a single product
+                            IconButton(
+                                icon: const Icon(Icons.edit),
+                                onPressed: () =>
+                                    _createOrUpdate(documentSnapshot)),
+                            // This icon button is used to delete a single product
+                            IconButton(
+                                icon: const Icon(Icons.delete),
+                                onPressed: () =>
+                                    _deleteProduct(documentSnapshot.id)),
+                          ],
+                        ),
+                      ],
                       ),
-                    ],
-                    ),
+                  ),
                   );
               },
             );
